@@ -87,8 +87,15 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.deepPurple,
-        title: Text(widget.title),
+        backgroundColor: Color(0xFFB39DDB), // สีม่วงพาสเทล
+        title: Text(
+          "Total is \$${_calculateTotalPrice()}",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // สีข้อความเป็นสีขาว
+          ),
+        ),
       ),
       body: Center(
         child: Padding(
@@ -160,6 +167,15 @@ class _MyHomePageState extends State<MyHomePage> {
       // เพิ่มเมนูที่สุ่มได้ไปยังลิสต์แสดงผล
       _displayedMenu.add(randomMenu);  // เพิ่มเมนูที่สุ่มไปในลิสต์ที่แสดงผล
     });
+  }
+
+  // ฟังก์ชันในการคำนวณราคาทั้งหมด
+  double _calculateTotalPrice() {
+    double totalPrice = 0.0;
+    for (var item in _displayedMenu) {
+      totalPrice += item.price;
+    }
+    return totalPrice;
   }
 }
 
