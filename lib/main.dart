@@ -1,120 +1,180 @@
+import 'dart:math';  // ใช้สำหรับการสุ่ม
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';  // สำหรับการใช้ FontAwesome Icons
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Profile Example',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Profile Example'),
-          backgroundColor: Colors.blueAccent,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Profile Image
-              Container(
-                width: 100,
-                height: 100,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      "https://cdn.readawrite.com/articles/12607/12606739/thumbnail/large.gif",
-                    ),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: const Center(),
-              ),
-              const SizedBox(height: 20),
-
-              // Firstname, Lastname, and Nickname
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    "Phattanison",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Kaison",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    "Pakbung",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Personal Information
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  _InfoContainer(text: "Hobby: อ่านหนังสือ"),
-                  _InfoContainer(text: "Food: ชาบู, หมูกระทะ"),
-                  _InfoContainer(text: "Birthplace: พิจิตร"),
-                ],
-              ),
-              const SizedBox(height: 20),
-
-              // Education
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Education:  ", style: TextStyle(fontSize: 16)),
-                  _InfoContainer(text: "elementary: Wat kao sai school (ปี: 55)"),
-                  _InfoContainer(text: "primary: Wat kao sai school (ปี: 57)"),
-                  _InfoContainer(text: "high school: Kao sai tap kao School (ปี: 59)"),
-                  _InfoContainer(text: "Undergrad: Naresuan University (ปี: 65)"),
-                ],
-              ),
-            ],
-          ),
-        ),
+      title: 'Menu App',
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
       ),
+      home: const MyHomePage(title: 'Food Menu'),
     );
   }
 }
 
-// Custom widget to style the information with a rounded border and light purple background
-class _InfoContainer extends StatelessWidget {
-  final String text;
-  const _InfoContainer({Key? key, required this.text}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  // รายการเมนูอาหาร
+  final List<MenuItem> _menuItems = [
+    MenuItem(
+      name: "Pad Thai",
+      category: "Thai Food",
+      price: 120,
+      description: "Fried noodles with shrimp, egg, and peanuts.",
+      icon: FontAwesomeIcons.bowlFood, // ใช้ไอคอนการ์ตูนของอาหาร
+    ),
+    MenuItem(
+      name: "Sushi",
+      category: "Japanese Food",
+      price: 200,
+      description: "Japanese rice rolls with seafood and vegetables.",
+      icon: FontAwesomeIcons.bowlFood, // ใช้ไอคอนอาหารที่ใกล้เคียง
+    ),
+    MenuItem(
+      name: "Burger",
+      category: "American Food",
+      price: 150,
+      description: "A beef patty with lettuce, cheese, and sauce.",
+      icon: FontAwesomeIcons.hamburger, // ไอคอนการ์ตูนสำหรับ Burger
+    ),
+    MenuItem(
+      name: "Pizza",
+      category: "Italian Food",
+      price: 250,
+      description: "Thin crust pizza with cheese and pepperoni.",
+      icon: FontAwesomeIcons.pizzaSlice, // ไอคอนการ์ตูนสำหรับ Pizza
+    ),
+    MenuItem(
+      name: "Pho",
+      category: "Vietnamese Food",
+      price: 100,
+      description: "Vietnamese noodle soup with beef or chicken.",
+      icon: FontAwesomeIcons.bowlFood, // ไอคอนการ์ตูนสำหรับ Pho
+    ),
+  ];
+
+  final Random _random = Random();  // สุ่มเลือกเมนู
+
+  // เมนูที่แสดงผล
+  List<MenuItem> _displayedMenu = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // เริ่มต้นด้วยการแสดงเมนูแรก
+    _displayedMenu.add(_menuItems[0]);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.purple.shade100,  // Light purple background color
-        borderRadius: BorderRadius.circular(12),  // Rounded corners
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12, 
-            blurRadius: 4, 
-            spreadRadius: 1, 
-            offset: Offset(2, 2), 
-          )
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
+        title: Text(widget.title),
       ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 16),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemCount: _displayedMenu.length,
+            itemBuilder: (context, index) {
+              final item = _displayedMenu[index];
+              return Card(
+                elevation: 5,
+                margin: const EdgeInsets.symmetric(vertical: 8.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
+                  leading: CircleAvatar(
+                    backgroundColor: Colors.deepPurple[100],  // สีพื้นหลังของวงกลม
+                    radius: 30,  // ขนาดของวงกลม
+                    child: Icon(
+                      item.icon,  // ไอคอนที่กำหนดในเมนู
+                      color: Colors.deepPurple,
+                      size: 30,
+                    ),
+                  ),
+                  title: Text(
+                    item.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                      color: Colors.deepPurple,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${item.category}\n${item.description}',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                  trailing: Text(
+                    '\$${item.price}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _randomMenu(); // เมื่อกดปุ่มสุ่มเมนู
+        },
+        tooltip: 'Add Random Menu',
+        backgroundColor: Colors.deepPurple,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
+
+  void _randomMenu() {
+    // สุ่มเมนูจากรายการที่มี
+    final randomIndex = _random.nextInt(_menuItems.length);
+    final randomMenu = _menuItems[randomIndex];
+
+    setState(() {
+      // เพิ่มเมนูที่สุ่มได้ไปยังลิสต์แสดงผล
+      _displayedMenu.add(randomMenu);  // เพิ่มเมนูที่สุ่มไปในลิสต์ที่แสดงผล
+    });
+  }
+}
+
+class MenuItem {
+  final String name;
+  final String category;
+  final double price;
+  final String description;
+  final IconData icon;  // ตัวแปร icon สำหรับเก็บไอคอน
+
+  MenuItem({
+    required this.name,
+    required this.category,
+    required this.price,
+    required this.description,
+    required this.icon,  // รับค่าไอคอน
+  });
 }
